@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マイダッシュボード</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- 作成したCSSファイルを読み込む設定 -->
+    <link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+
+    <!-- 左側：メニュー -->
+    <aside class="sidebar">
+        <!-- アカウント欄 -->
+        <div class="account-section">
+            <h1 class="logo">Insta Analytics</h1>
+            <button type="button" class="btn-account">アカウント設定</button>
+        </div>
+
+        <!-- 表示内容欄（分析メニュー ＆ アコーディオン） -->
+        <nav class="menu-section">
+            <h3>分析メニュー</h3>
+            <ul class="menu-list">
+                
+                <!-- 📊 アカウントサマリー -->
+                <li class="menu-item has-sub">
+                    <a href="#account" class="menu-toggle">
+                        <span>📊 アカウントサマリー</span>
+                        <span class="arrow">▼</span>
+                    </a>
+                    <div class="accordion-content">                    
+                       <ul class="sub-menu">
+                        <li><label><input type="checkbox" id="chk-follower_count" name="follower_count" checked> フォロワー数 (follower_count)</label></li>
+                        <li><label><input type="checkbox" id="chk-follows_count" name="follows_count" checked> フォロー数 (follows_count)</label></li>
+                        <li><label><input type="checkbox" id="chk-media_count" name="media_count" checked> 投稿数 (media_count)</label></li>
+                        <li><label><input type="checkbox" id="chk-impressions" name="impressions" checked> インプレッション (impressions)</label></li>
+                        <li><label><input type="checkbox" id="chk-reach" name="reach" checked> リーチ (reach)</label></li>
+                        <li><label><input type="checkbox" id="chk-profile_views" name="profile_views" checked> プロフィール閲覧数 (profile_views)</label></li>
+                        <li><label><input type="checkbox" id="chk-website_clicks" name="website_clicks" checked> サイトクリック数 (website_clicks)</label></li>
+                        <li><label><input type="checkbox" id="chk-email_contacts" name="email_contacts" checked> リンクタップ数 (email_contacts)</label></li>
+                       </ul>
+                    </div>
+                </li>
+
+                <!-- 🖼️ フィード分析 -->
+                <li class="menu-item has-sub">
+                    <a href="#feed" class="menu-toggle">
+                        <span>🖼️ フィード分析</span>
+                        <span class="arrow">▼</span>
+                    </a>
+                    <div class="accordion-content">
+                        <ul class="sub-menu">
+                            <li><label><input type="checkbox" checked> いいね数 (likes)</label></li>
+                            <li><label><input type="checkbox" checked> コメント数 (comments)</label></li>
+                            <li><label><input type="checkbox" checked> 保存数 (saved)</label></li>
+                            <li><label><input type="checkbox" checked> リーチ数 (reach)</label></li>
+                            <li><label><input type="checkbox" checked> インプレッション数 (impressions)</label></li>
+                            <li><label><input type="checkbox" checked> プロフィール遷移数 (profile_visits)</label></li>
+                            <li><label><input type="checkbox" checked> 投稿発のフォロー数 (follows)</label></li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- 🎬 リール分析 -->
+                <li class="menu-item has-sub">
+                    <a href="#reels" class="menu-toggle">
+                        <span>🎬 リール分析</span>
+                        <span class="arrow">▼</span>
+                    </a>
+                    <div class="accordion-content">
+                        <ul class="sub-menu">
+                            <li><label><input type="checkbox" checked> 再生回数 (plays)</label></li>
+                            <li><label><input type="checkbox" checked> リーチ数 (reach)</label></li>
+                            <li><label><input type="checkbox" checked> いいね数 (likes)</label></li>
+                            <li><label><input type="checkbox" checked> コメント数 (comments)</label></li>
+                            <li><label><input type="checkbox" checked> 保存数 (saved)</label></li>
+                            <li><label><input type="checkbox" checked> シェア数 (shares)</label></li>
+                            <li><label><input type="checkbox" checked> 合計エンゲージメント (total_interactions)</label></li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- 📖 ストーリーズ分析 -->
+                <li class="menu-item has-sub">
+                    <a href="#stories" class="menu-toggle">
+                        <span>📖 ストーリーズ分析</span>
+                        <span class="arrow">▼</span>
+                    </a>
+                    <div class="accordion-content">
+                        <ul class="sub-menu">
+                            <li><label><input type="checkbox" checked> インプレッション数 (impressions)</label></li>
+                            <li><label><input type="checkbox" checked> リーチ数 (reach)</label></li>
+                            <li><label><input type="checkbox" checked> 返信数/DM (replies)</label></li>
+                            <li><label><input type="checkbox" checked> 次へスキップ (taps_forward)</label></li>
+                            <li><label><input type="checkbox" checked> 前へ戻る (taps_back)</label></li>
+                            <li><label><input type="checkbox" checked> 途中で離脱 (exits)</label></li>
+                        </ul>
+                    </div>
+                </li>
+
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- 右側：アウトカム -->
+    <main class="main-content">
+        <div class="kpi-grid">
+            <!-- 1. フォロワー数 (C列) -->
+            <div class="kpi-card" id="kpi-card-follower_count">
+                <div class="kpi-title">フォロワー数 (follower_count)</div>
+                <div class="kpi-value" id="val-follower_count">0</div>
+                <div class="kpi-diff" id="diff-follower_count">▲ +0 (0.0%)</div>
+            </div>
+
+            <!-- 2. フォロー数 (D列) -->
+            <div class="kpi-card" id="kpi-card-follows_count">
+                <div class="kpi-title">フォロー数 (follows_count)</div>
+                <div class="kpi-value" id="val-follows_count">0</div>
+                <div class="kpi-diff" id="diff-follows_count">▲ +0 (0.0%)</div>
+            </div>
+
+            <!-- 3. 投稿数 (E列) -->
+            <div class="kpi-card" id="kpi-card-media_count">
+                <div class="kpi-title">投稿数 (media_count)</div>
+                <div class="kpi-value" id="val-media_count">0</div>
+                <div class="kpi-diff" id="diff-media_count">▲ +0 (0.0%)</div>
+            </div>
+
+            <!-- 4. インプレッション (I列) -->
+            <div class="kpi-card" id="kpi-card-impressions">
+                <div class="kpi-title">インプレッション (impressions)</div>
+                <div class="kpi-value" id="val-impressions">0</div>
+                <div class="kpi-diff" id="diff-impressions">▲ +0 (0.0%)</div>
+            </div>
+
+            <!-- 5. リーチ (J列) -->
+            <div class="kpi-card" id="kpi-card-reach">
+                <div class="kpi-title">リーチ (reach)</div>
+                <div class="kpi-value" id="val-reach">0</div>
+                <div class="kpi-diff" id="diff-reach">▲ +0 (0.0%)</div>
+            </div>
+
+            <!-- 6. プロフィール閲覧数 (K列) -->
+            <div class="kpi-card" id="kpi-card-profile_views">
+                <div class="kpi-title">プロフィール閲覧数 (profile_views)</div>
+                <div class="kpi-value" id="val-profile_views">0</div>
+                <div class="kpi-diff" id="diff-profile_views">▲ +0 (0.0%)</div>
+            </div>
+
+            <!-- 7. サイトクリック数 (L列) -->
+            <div class="kpi-card" id="kpi-card-website_clicks">
+                <div class="kpi-title">サイトクリック数 (website_clicks)</div>
+                <div class="kpi-value" id="val-website_clicks">0</div>
+                <div class="kpi-diff" id="diff-website_clicks">▲ +0 (0.0%)</div>
+            </div>
+
+            <!-- 8. リンクタップ数 (M列) -->
+            <div class="kpi-card" id="kpi-card-email_contacts">
+                <div class="kpi-title">リンクタップ数 (email_contacts)</div>
+                <div class="kpi-value" id="val-email_contacts">0</div>
+                <div class="kpi-diff" id="diff-email_contacts">▲ +0 (0.0%)</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JSを外部ファイルから読み込み -->
+    <script src="../js/index.js"></script>
+</body>
+</html>

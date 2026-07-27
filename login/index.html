@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログイン</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>ログイン</h2>
+    <form id="loginForm">
+      <div class="input-group">
+        <label for="username">メールアドレス</label>
+        <input type="text" id="username" required placeholder="入力してください">
+      </div>
+      
+      <div class="input-group">
+        <label for="password">パスワード</label>
+        <input type="password" id="password" required placeholder="••••••••">
+      </div>
+
+      <button type="submit" class="btn-submit">ログイン</button>
+    </form>
+    <div id="message" class="message"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
