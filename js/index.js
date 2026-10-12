@@ -156,8 +156,7 @@ function setupControls() {
       startDateInput.value = oneWeekAgo.toISOString().split('T')[0];
       startDateInput.max = endDateInput.value;
       endDateInput.max = endDateInput.value;
-      startDateInput.max = endDateInput.value;
-
+        
       // 日付が変更されたときのイベント
       startDateInput.addEventListener('change', updateChart);
       endDateInput.addEventListener('change', updateChart);
