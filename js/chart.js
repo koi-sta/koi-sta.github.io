@@ -53,3 +53,8 @@ function setupFilterEvents() {
     });
   });
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+  initChart();        // グラフを描く
+  setupFilterEvents(); // チェックボックスの連動を有効にする
+});
