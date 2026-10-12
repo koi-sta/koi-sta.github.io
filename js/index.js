@@ -145,18 +145,18 @@ function setupControls() {
 
     // デフォルトで最長1年前〜今日の初期値を設定
     const today = new Date();
-    const oneYearAgo = new Date();
-    oneYearAgo.setFullYear(today.getFullYear() - 1);
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(today.getDate() - 7);
 
     const startDateInput = document.getElementById('start-date');
     const endDateInput = document.getElementById('end-date');
 
     if (startDateInput && endDateInput) {
       endDateInput.value = today.toISOString().split('T')[0];
-      startDateInput.value = oneYearAgo.toISOString().split('T')[0];
+      startDateInput.value = oneWeekAgo.toISOString().split('T')[0];
       startDateInput.max = endDateInput.value;
       endDateInput.max = endDateInput.value;
-      startDateInput.min = oneYearAgo.toISOString().split('T')[0];
+      startDateInput.max = endDateInput.value;
 
       // 日付が変更されたときのイベント
       startDateInput.addEventListener('change', updateChart);
