@@ -18,36 +18,72 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 let trendChart = null;
 
-// 全項目のマスターデータ（ダミー例。実際にはAPIや別データから取得）
+// 全項目のマスターデータ（例：日付と値のペアを持つ形式）
+// 実際にはAPIやサーバーから取得したデータをここに当てはめます
 const allMetricsData = {
-  follower_count: { label: 'フォロワー数', data: [1200, 1205, 1210, 1220, 1235, 1250, 1260], color: 'rgb(75, 192, 192)' },
-  follows_count: { label: 'フォロー数', data: [300, 300, 301, 301, 302, 302, 303], color: 'rgb(54, 162, 235)' },
-  media_count: { label: '投稿数', data: [45, 45, 46, 46, 46, 47, 47], color: 'rgb(255, 159, 64)' },
-  impressions: { label: 'インプレッション', data: [5000, 5200, 4800, 6100, 5900, 6300, 7000], color: 'rgb(153, 102, 255)' },
-  reach: { label: 'リーチ', data: [4000, 4100, 3900, 4800, 4600, 5000, 5500], color: 'rgb(255, 99, 132)' },
-  profile_views: { label: 'プロフィール閲覧数', data: [150, 160, 140, 180, 170, 190, 210], color: 'rgb(255, 205, 86)' },
-  website_clicks: { label: 'サイトクリック数', data: [10, 12, 8, 15, 14, 20, 18], color: 'rgb(201, 203, 207)' },
-  email_contacts: { label: 'リンクタップ数', data: [5, 6, 4, 7, 6, 9, 8], color: 'rgb(75, 192, 192)' }
+  follower_count: { 
+    label: 'フォロワー数', 
+    color: 'rgb(75, 192, 192)',
+    // 日付ごとのデータ例 (YYYY-MM-DD形式)
+    history: {
+      '2026-10-06': 1200, '2026-10-07': 1205, '2026-10-08': 1210, 
+      '2026-10-09': 1220, '2026-10-10': 1235, '2026-10-11': 1250, '2026-10-12': 1260
+    }
+  },
+  follows_count: { 
+    label: 'フォロー数', 
+    color: 'rgb(54, 162, 235)',
+    history: {
+      '2026-10-06': 300, '2026-10-07': 300, '2026-10-08': 301, 
+      '2026-10-09': 301, '2026-10-10': 302, '2026-10-11': 302, '2026-10-12': 303
+    }
+  },
+  media_count: { label: '投稿数', color: 'rgb(255, 159, 64)', history: {} },
+  impressions: { label: 'インプレッション', color: 'rgb(153, 102, 255)', history: {} },
+  reach: { label: 'リーチ', color: 'rgb(255, 99, 132)', history: {} },
+  profile_views: { label: 'プロフィール閲覧数', color: 'rgb(255, 205, 86)', history: {} },
+  website_clicks: { label: 'サイトクリック数', color: 'rgb(201, 203, 207)', history: {} },
+  email_contacts: { label: 'リンクタップ数', color: 'rgb(75, 192, 192)', history: {} }
 };
 
-// グラフを描画・更新する関数
-function updateChart(selectedKey = 'follower_count', startDate = null, endDate = null) {
+// グラフを描画・更新する関数（期間と指標を反映）
+function updateChart() {
   const canvasElement = document.getElementById('trendChart');
   if (!canvasElement) return;
 
-  const ctx = canvasElement.getContext('2d');
+  const selector = document.getElementById('metric-selector');
+  const selectedKey = selector ? selector.value : 'follower_count';
   const metric = allMetricsData[selectedKey];
 
-  // 3. 値が入っていない（データがない）場合はグラフに表示しない
-  const hasData = metric && metric.data && metric.data.length > 0 && metric.data.some(val => val !== null && val !== undefined);
+  const startDateInput = document.getElementById('start-date');
+  const endDateInput = document.getElementById('end-date');
+  
+  const startDate = startDateInput ? new Date(startDateInput.value) : null;
+  const endDate = endDateInput ? new Date(endDateInput.value) : null;
 
-  const chartData = hasData ? metric.data : [];
+  // 選択された期間に合わせてデータをフィルタリング
+  let labels = [];
+  let dataValues = [];
+
+  if (metric && metric.history) {
+    Object.keys(metric.history).sort().forEach(dateStr => {
+      const currentDate = new Date(dateStr);
+      // 期間内かどうかをチェック
+      if ((!startDate || currentDate >= startDate) && (!endDate || currentDate <= endDate)) {
+        labels.push(dateStr);
+        dataValues.push(metric.history[dateStr]);
+      }
+    });
+  }
+
+  // 3. 値が入っていない（データがない）場合はグラフに表示しない
+  const hasData = dataValues.length > 0 && dataValues.some(val => val !== null && val !== undefined);
+  const chartData = hasData ? dataValues : [];
   const chartLabel = metric ? metric.label : '';
   const chartColor = metric ? metric.color : 'rgb(0,0,0)';
 
-  // 期間フィルターの処理（簡易的に日付ラベルをフィルタリングする例）
-  let labels = ['10/6', '10/7', '10/8', '10/9', '10/10', '10/11', '10/12'];
-  
+  const ctx = canvasElement.getContext('2d');
+
   if (trendChart) {
     trendChart.data.labels = labels;
     trendChart.data.datasets = hasData ? [{
@@ -80,10 +116,9 @@ function updateChart(selectedKey = 'follower_count', startDate = null, endDate =
 }
 
 // ==========================================
-// 3. コントロール（切り替えボタン・期間・チェックボックス）の設定
+// 3. コントロール（セレクトボックス・日付）のセットアップ
 // ==========================================
 function setupControls() {
-  // ① HTML側に「指標切り替え用セレクター」や「日付ピッカー」を配置するためのセットアップ
   const chartSection = document.getElementById('chart-section');
   if (chartSection && !document.getElementById('chart-controls')) {
     const controlsHtml = `
@@ -122,15 +157,17 @@ function setupControls() {
       startDateInput.max = endDateInput.value;
       endDateInput.max = endDateInput.value;
       startDateInput.min = oneYearAgo.toISOString().split('T')[0];
+
+      // ★日付が変更されたときのイベントを追加
+      startDateInput.addEventListener('change', updateChart);
+      endDateInput.addEventListener('change', updateChart);
     }
 
-    // セレクター変更時のイベント
-    document.getElementById('metric-selector').addEventListener('change', (e) => {
-      updateChart(e.target.value);
-    });
+    // セレクター（指標）が変更されたときのイベント
+    document.getElementById('metric-selector').addEventListener('change', updateChart);
   }
 
-  // ② チェックボックスとKPIカードの連動
+  // チェックボックスとKPIカードの連動
   const checkboxes = document.querySelectorAll('.sub-menu input[type="checkbox"]');
   checkboxes.forEach(checkbox => {
     checkbox.addEventListener('change', (e) => {
@@ -149,6 +186,6 @@ function setupControls() {
 // 4. ページ読み込み時の自動実行
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-  updateChart('follower_count'); // 初期表示
   setupControls();
+  updateChart(); // 初期表示
 });
