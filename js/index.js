@@ -19,12 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
 let trendChart = null;
 
 // 全項目のマスターデータ（例：日付と値のペアを持つ形式）
-// 実際にはAPIやサーバーから取得したデータをここに当てはめます
 const allMetricsData = {
   follower_count: { 
     label: 'フォロワー数', 
     color: 'rgb(75, 192, 192)',
-    // 日付ごとのデータ例 (YYYY-MM-DD形式)
     history: {
       '2026-10-06': 1200, '2026-10-07': 1205, '2026-10-08': 1210, 
       '2026-10-09': 1220, '2026-10-10': 1235, '2026-10-11': 1250, '2026-10-12': 1260
@@ -58,27 +56,29 @@ function updateChart() {
   const startDateInput = document.getElementById('start-date');
   const endDateInput = document.getElementById('end-date');
   
-  const startDate = startDateInput ? new Date(startDateInput.value) : null;
-  const endDate = endDateInput ? new Date(endDateInput.value) : null;
+  const startDate = startDateInput && startDateInput.value ? new Date(startDateInput.value) : null;
+  const endDate = endDateInput && endDateInput.value ? new Date(endDateInput.value) : null;
 
-  // 選択された期間に合わせてデータをフィルタリング
   let labels = [];
   let dataValues = [];
 
-  if (metric && metric.history) {
-    Object.keys(metric.history).sort().forEach(dateStr => {
-      const currentDate = new Date(dateStr);
-      // 期間内かどうかをチェック
-      if ((!startDate || currentDate >= startDate) && (!endDate || currentDate <= endDate)) {
-        labels.push(dateStr);
+  // ★ 選択された期間の全日付を生成し、記録がない日は「0」で埋める
+  if (startDate && endDate) {
+    let curr = new Date(startDate);
+    while (curr <= endDate) {
+      const dateStr = curr.toISOString().split('T')[0];
+      labels.push(dateStr);
+
+      if (metric && metric.history && metric.history[dateStr] !== undefined) {
         dataValues.push(metric.history[dateStr]);
+      } else {
+        dataValues.push(0); // 記録がない日は0にする
       }
-    });
+
+      curr.setDate(curr.getDate() + 1);
+    }
   }
 
-  // 3. 値が入っていない（データがない）場合はグラフに表示しない
-  const hasData = dataValues.length > 0 && dataValues.some(val => val !== null && val !== undefined);
-  const chartData = hasData ? dataValues : [];
   const chartLabel = metric ? metric.label : '';
   const chartColor = metric ? metric.color : 'rgb(0,0,0)';
 
@@ -86,26 +86,26 @@ function updateChart() {
 
   if (trendChart) {
     trendChart.data.labels = labels;
-    trendChart.data.datasets = hasData ? [{
+    trendChart.data.datasets = [{
       label: chartLabel,
-      data: chartData,
+      data: dataValues,
       borderColor: chartColor,
       tension: 0.1,
       hidden: false
-    }] : [];
+    }];
     trendChart.update();
   } else {
     trendChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: labels,
-        datasets: hasData ? [{
+        datasets: [{
           label: chartLabel,
-          data: chartData,
+          data: dataValues,
           borderColor: chartColor,
           tension: 0.1,
           hidden: false
-        }] : []
+        }]
       },
       options: {
         responsive: true,
@@ -158,7 +158,7 @@ function setupControls() {
       endDateInput.max = endDateInput.value;
       startDateInput.min = oneYearAgo.toISOString().split('T')[0];
 
-      // ★日付が変更されたときのイベントを追加
+      // 日付が変更されたときのイベント
       startDateInput.addEventListener('change', updateChart);
       endDateInput.addEventListener('change', updateChart);
     }
