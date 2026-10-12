@@ -162,9 +162,18 @@
                 <div class="kpi-diff" id="diff-email_contacts">▲ +0 (0.0%)</div>
             </div>
         </div>
+        <!-- 新しく追加するグラフ表示エリア -->
+        <div class="chart-section" id="chart-section" style="margin-top: 30px;">
+            <h2>日別推移グラフ</h2>
+            <div class="chart-container" style="position: relative; height:300px; width:100%;">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
     </main>
+
 
     <!-- JSを外部ファイルから読み込み -->
     <script src="../js/index.js"></script>
+    <script src="../js/chart.js"></script>
 </body>
 </html>
